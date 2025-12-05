@@ -20,11 +20,12 @@
             background-color: var(--bg); overflow: hidden;
             font-family: 'Orbitron', sans-serif;
             user-select: none; touch-action: none; color: white;
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
         }
 
         canvas { display: block; width: 100%; height: 100%; }
 
-        /* FX Layers (CSS GPU Accelerated) */
+        /* FX Layers */
         #fx-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 10;
@@ -55,7 +56,8 @@
 
         /* Top Bar */
         .top-bar {
-            padding: 40px 20px 10px 20px;
+            padding: 20px; /* Safe area padding usually handled by OS, keeping simple */
+            padding-top: max(20px, env(safe-area-inset-top)); 
             display: flex; justify-content: space-between; align-items: flex-start;
             background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
             pointer-events: auto;
@@ -73,10 +75,9 @@
         }
 
         .hp-container {
-            position: relative; width: 240px; height: 24px;
+            position: relative; width: 200px; height: 20px;
             background: rgba(20,20,20,0.8); border: 1px solid #666; transform: skewX(-15deg);
-            margin-bottom: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            margin-bottom: 5px;
         }
         .hp-fill {
             height: 100%; background: linear-gradient(90deg, #ff0055, #ff5555); 
@@ -86,57 +87,65 @@
         .hp-text {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 11px; font-weight: 900; color: white; transform: skewX(15deg);
+            font-size: 10px; font-weight: 900; color: white; transform: skewX(15deg);
             text-shadow: 1px 1px 2px black;
         }
 
         /* Boss HP */
         #boss-hp-container {
             position: absolute; top: 120px; left: 50%; transform: translateX(-50%);
-            width: 60%; height: 25px; background: rgba(0,0,0,0.8); border: 2px solid var(--danger);
+            width: 60%; height: 20px; background: rgba(0,0,0,0.8); border: 2px solid var(--danger);
             display: none; z-index: 20; box-shadow: 0 0 30px rgba(255,0,0,0.4);
         }
         #boss-hp-fill {
             height: 100%; background: linear-gradient(90deg, #880000, #ff0000); width: 100%; transition: width 0.2s;
         }
         #boss-name {
-            position: absolute; top: -35px; left: 0; width: 100%; text-align: center;
-            color: var(--danger); font-weight: 900; font-size: 1.8rem; 
-            text-shadow: 0 0 20px red; letter-spacing: 3px;
+            position: absolute; top: -25px; left: 0; width: 100%; text-align: center;
+            color: var(--danger); font-weight: 900; font-size: 1.2rem; 
+            text-shadow: 0 0 20px red; letter-spacing: 2px;
         }
 
-        /* Controls */
+        /* Mobile Controls */
+        .controls-area {
+            position: absolute; bottom: 30px; right: 30px;
+            display: flex; flex-direction: column; align-items: flex-end;
+            gap: 20px; padding-bottom: env(safe-area-inset-bottom);
+        }
+
         .skill-btn {
-            position: absolute; bottom: 50px; right: 40px; width: 90px; height: 90px;
-            border-radius: 12px; border: 2px solid rgba(0, 243, 255, 0.5); 
-            background: rgba(0, 20, 30, 0.85); backdrop-filter: blur(5px);
+            width: 90px; height: 90px;
+            border-radius: 50%; border: 2px solid rgba(0, 243, 255, 0.5); 
+            background: rgba(0, 20, 30, 0.6); backdrop-filter: blur(4px);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 0 25px rgba(0, 243, 255, 0.3); 
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.2); 
             pointer-events: auto; overflow: hidden;
             transition: transform 0.1s, border-color 0.2s;
+            /* Enhance touch target */
+            position: relative;
         }
-        .skill-btn:active { transform: scale(0.95); border-color: #fff; }
-        .skill-icon { font-size: 32px; z-index: 2; text-shadow: 0 0 10px var(--primary); }
-        .skill-key { font-size: 10px; color: #aaa; margin-top: 4px; z-index: 2; font-weight: bold; }
+        .skill-btn:active { transform: scale(0.9); background: rgba(0, 243, 255, 0.2); border-color: #fff; }
+        .skill-icon { font-size: 32px; z-index: 2; text-shadow: 0 0 10px var(--primary); pointer-events: none; }
+        .skill-key { font-size: 10px; color: #aaa; margin-top: 2px; z-index: 2; font-weight: bold; pointer-events: none; }
         
         .skill-cd-overlay {
             position: absolute; bottom: 0; left: 0; width: 100%; height: 0%;
             background: rgba(0, 0, 0, 0.8);
-            z-index: 1; transition: height 0.1s linear;
+            z-index: 1; transition: height 0.1s linear; pointer-events: none;
         }
 
         .ult-btn {
-            position: absolute; bottom: 160px; right: 55px; width: 60px; height: 60px;
+            width: 70px; height: 70px; margin-right: 10px;
             border-radius: 50%; border: 2px solid var(--warning); background: rgba(255, 170, 0, 0.2);
-            display: none; align-items: center; justify-content: center; font-size: 24px;
+            display: none; align-items: center; justify-content: center; font-size: 28px;
             box-shadow: 0 0 40px var(--warning); pointer-events: auto; animation: pulseUlt 1s infinite;
             z-index: 60; cursor: pointer; backdrop-filter: blur(4px);
         }
         @keyframes pulseUlt { 0% { transform: scale(1); box-shadow: 0 0 20px var(--warning); } 50% { transform: scale(1.1); box-shadow: 0 0 50px var(--warning); } 100% { transform: scale(1); box-shadow: 0 0 20px var(--warning); } }
         
         .ult-bar-container {
-            position: absolute; bottom: 150px; right: 45px; width: 80px; height: 6px; 
-            background: #222; border: 1px solid #444; border-radius: 3px;
+            width: 70px; height: 6px; margin-right: 10px; margin-bottom: -15px;
+            background: #222; border: 1px solid #444; border-radius: 3px; z-index: 61;
         }
         .ult-bar-fill { height: 100%; background: var(--warning); width: 0%; transition: width 0.2s; box-shadow: 0 0 10px var(--warning); }
 
@@ -193,7 +202,6 @@
     <div class="xp-bar-fixed"><div class="xp-fill" id="xp-bar"></div></div>
 
     <canvas id="gameCanvas"></canvas>
-    <!-- Visual Effect Layer -->
     <div id="fx-layer"></div>
 
     <div id="ui-layer">
@@ -220,24 +228,25 @@
             <div id="boss-hp-fill"></div>
         </div>
         
-        <div class="ult-bar-container"><div class="ult-bar-fill" id="ult-bar"></div></div>
-        <div class="ult-btn" id="ult-btn">☢</div>
+        <div class="controls-area">
+            <div class="ult-bar-container"><div class="ult-bar-fill" id="ult-bar"></div></div>
+            <div class="ult-btn" id="ult-btn">☢</div>
 
-        <div class="skill-btn" id="dash-btn">
-            <span class="skill-icon">⚡</span>
-            <span class="skill-key">DASH</span>
-            <div class="skill-cd-overlay" id="dash-cd"></div>
+            <div class="skill-btn" id="dash-btn">
+                <span class="skill-icon">⚡</span>
+                <span class="skill-key">DASH</span>
+                <div class="skill-cd-overlay" id="dash-cd"></div>
+            </div>
         </div>
     </div>
 
     <!-- Menus -->
     <div id="start-menu" class="modal" style="display:flex;">
-        <h1 style="font-size: 3rem; margin-bottom: 5px; color: var(--primary); text-shadow: 0 0 40px var(--primary); text-align:center; line-height: 1;">NEON<br><span style="color:white; font-size:1.5rem; letter-spacing: 8px;">GENESIS 10.1</span></h1>
-        <p style="color:#aaa; margin-bottom:40px; font-size: 0.9rem; text-shadow: 0 0 5px rgba(255,255,255,0.5);">终极光效 • 离屏渲染 • 极致流畅</p>
+        <h1 style="font-size: 3rem; margin-bottom: 5px; color: var(--primary); text-shadow: 0 0 40px var(--primary); text-align:center; line-height: 1;">NEON<br><span style="color:white; font-size:1.5rem; letter-spacing: 8px;">MOBILE 11.0</span></h1>
+        <p style="color:#aaa; margin-bottom:40px; font-size: 0.9rem; text-shadow: 0 0 5px rgba(255,255,255,0.5);">滑屏移动 • 多点触控 • 沉浸体验</p>
         <button class="btn" onclick="Game.start()">建立神经连接</button>
     </div>
 
-    <!-- Pause Menu (Fixed) -->
     <div id="pause-menu" class="modal">
         <h2 style="color:white; margin-bottom:30px; font-size: 3rem; text-shadow: 0 0 20px white; letter-spacing: 5px;">PAUSED</h2>
         <button class="btn" onclick="Game.togglePause()">继续连接</button>
@@ -259,8 +268,6 @@
 
     <script>
     (function() {
-        // --- ASSET MANAGER (OFFSCREEN RENDERING) ---
-        // Pre-render glows to images for massive performance boost
         const Assets = {
             glows: {},
             init() {
@@ -274,58 +281,40 @@
             },
             createGlow(r, color) {
                 const c = document.createElement('canvas');
-                const size = r * 6; // Big enough for glow
-                c.width = size; c.height = size;
+                const size = r * 6; c.width = size; c.height = size;
                 const ctx = c.getContext('2d');
                 const center = size / 2;
-                
-                // Outer Glow
                 const grad = ctx.createRadialGradient(center, center, r, center, center, size/2);
-                grad.addColorStop(0, color);
-                grad.addColorStop(1, 'rgba(0,0,0,0)');
-                ctx.fillStyle = grad;
-                ctx.globalAlpha = 0.6;
+                grad.addColorStop(0, color); grad.addColorStop(1, 'rgba(0,0,0,0)');
+                ctx.fillStyle = grad; ctx.globalAlpha = 0.6;
                 ctx.beginPath(); ctx.arc(center, center, size/2, 0, Math.PI*2); ctx.fill();
-                
-                // Core
-                ctx.globalAlpha = 1.0;
-                ctx.fillStyle = '#fff';
+                ctx.globalAlpha = 1.0; ctx.fillStyle = '#fff';
                 ctx.beginPath(); ctx.arc(center, center, r/2, 0, Math.PI*2); ctx.fill();
-                
                 return c;
             }
         };
 
-        // --- OBJECT POOL ---
         class Pool {
-            constructor(createFn, resetFn) {
-                this.pool = []; this.createFn = createFn; this.resetFn = resetFn;
-            }
-            get(...args) {
-                let obj = this.pool.length > 0 ? this.pool.pop() : this.createFn();
-                this.resetFn(obj, ...args); return obj;
-            }
+            constructor(createFn, resetFn) { this.pool = []; this.createFn = createFn; this.resetFn = resetFn; }
+            get(...args) { let obj = this.pool.length > 0 ? this.pool.pop() : this.createFn(); this.resetFn(obj, ...args); return obj; }
             release(obj) { this.pool.push(obj); }
         }
 
-        // --- AUDIO ENGINE ---
         const Sfx = {
             ctx: null,
             init() {
                 window.AudioContext = window.AudioContext || window.webkitAudioContext;
                 this.ctx = new AudioContext();
                 this.master = this.ctx.createGain();
-                this.master.gain.value = 0.2; 
-                this.master.connect(this.ctx.destination);
+                this.master.gain.value = 0.2; this.master.connect(this.ctx.destination);
             },
             play(type) {
                 if(!this.ctx) return;
                 const t = this.ctx.currentTime;
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
-                
                 if (type === 'shoot') {
-                    osc.type = 'triangle'; osc.frequency.setValueAtTime(300 + Math.random()*50, t); osc.frequency.exponentialRampToValueAtTime(50, t + 0.1);
+                    osc.type = 'triangle'; osc.frequency.setValueAtTime(300, t); osc.frequency.exponentialRampToValueAtTime(50, t + 0.1);
                     gain.gain.setValueAtTime(0.1, t); gain.gain.linearRampToValueAtTime(0, t + 0.1);
                 } else if (type === 'hit') {
                     osc.type = 'square'; osc.frequency.setValueAtTime(100, t); osc.frequency.linearRampToValueAtTime(0, t + 0.05);
@@ -337,23 +326,14 @@
                     osc.type = 'sine'; osc.frequency.setValueAtTime(400, t); osc.frequency.linearRampToValueAtTime(800, t+0.4);
                     gain.gain.setValueAtTime(0.2, t); gain.gain.linearRampToValueAtTime(0, t + 0.6);
                 }
-
-                osc.connect(gain); gain.connect(this.master);
-                osc.start(); osc.stop(t + 1);
+                osc.connect(gain); gain.connect(this.master); osc.start(); osc.stop(t + 1);
             }
         };
 
-        // --- BACKGROUND ---
         class Starfield {
             constructor() {
                 this.stars = [];
-                for(let i=0; i<100; i++) {
-                    this.stars.push({
-                        x: Math.random() * window.innerWidth,
-                        y: Math.random() * window.innerHeight,
-                        z: Math.random() * 2 + 0.5
-                    });
-                }
+                for(let i=0; i<100; i++) this.stars.push({x:Math.random()*window.innerWidth, y:Math.random()*window.innerHeight, z:Math.random()*2+0.5});
             }
             update(dx, dy) {
                 this.stars.forEach(s => {
@@ -364,16 +344,11 @@
             }
             draw(ctx) {
                 ctx.fillStyle = '#fff';
-                this.stars.forEach(s => {
-                    ctx.globalAlpha = Math.random() * 0.3 + 0.2;
-                    const sz = s.z * 0.8;
-                    ctx.beginPath(); ctx.rect(s.x, s.y, sz, sz); ctx.fill();
-                });
+                this.stars.forEach(s => { ctx.globalAlpha = 0.3; ctx.beginPath(); ctx.fillRect(s.x, s.y, s.z, s.z); });
                 ctx.globalAlpha = 1;
             }
         }
 
-        // --- GAME ENGINE ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d', { alpha: false });
         let cw, ch;
@@ -381,7 +356,6 @@
         window.addEventListener('resize', resize);
         resize();
 
-        // Object Pools
         const bulletPool = new Pool(() => new Bullet(), (b, x, y, a, skills, stats) => b.init(x, y, a, skills, stats));
         const particlePool = new Pool(() => new Particle(), (p, x, y, c, s) => p.init(x, y, c, s));
         const enemyPool = new Pool(() => new Enemy(), (e, type, cfg) => e.init(type, cfg));
@@ -389,19 +363,11 @@
         const Game = {
             active: false, paused: false,
             time: 0, frame: 0, score: 0,
-            
-            player: null,
-            enemies: [], eBullets: [], bullets: [], particles: [], pickups: [], texts: [],
-            lasers: [], novas: [],
-            
-            bossActive: null,
-            timeStopActive: false, timeStopDuration: 0,
-            waveConfig: { nextSwarm: 15, bossSpawned: false },
-            starfield: null,
+            player: null, enemies: [], eBullets: [], bullets: [], particles: [], pickups: [], texts: [], lasers: [], novas: [],
+            bossActive: null, timeStopActive: false, timeStopDuration: 0, waveConfig: { nextSwarm: 15, bossSpawned: false }, starfield: null,
 
             start() {
-                Sfx.init();
-                Assets.init(); // Gen textures
+                Sfx.init(); Assets.init();
                 document.getElementById('start-menu').style.display = 'none';
                 this.active = true;
                 this.player = new Player();
@@ -410,16 +376,12 @@
                 this.loop();
                 if(this.timer) clearInterval(this.timer);
                 this.timer = setInterval(() => {
-                    if(!this.paused && this.active && !Game.timeStopActive) {
-                        Game.time++;
-                        Game.updateTimeDisplay();
-                    }
+                    if(!this.paused && this.active && !Game.timeStopActive) { Game.time++; Game.updateTimeDisplay(); }
                 }, 1000);
             },
 
             reset() {
-                this.enemies = []; this.eBullets = []; this.bullets = [];
-                this.particles = []; this.pickups = []; this.texts = []; this.lasers = []; this.novas = [];
+                this.enemies = []; this.eBullets = []; this.bullets = []; this.particles = []; this.pickups = []; this.texts = []; this.lasers = []; this.novas = [];
                 this.time = 0; this.score = 0; this.frame = 0;
                 this.timeStopActive = false; this.bossActive = null;
                 this.waveConfig = { nextSwarm: 15, bossSpawned: false };
@@ -449,23 +411,16 @@
 
             triggerUlt() {
                 if(Game.player.ultCharge < 100) return;
-                Game.player.ultCharge = 0;
-                Game.player.ultActive = true;
-                Game.player.ultTimer = 300; 
+                Game.player.ultCharge = 0; Game.player.ultActive = true; Game.player.ultTimer = 300; 
                 document.getElementById('ult-btn').style.display = 'none';
                 document.getElementById('fx-layer').className = 'fx-ult';
                 setTimeout(() => { if(!Game.timeStopActive) document.getElementById('fx-layer').className = ''; }, 500);
                 Sfx.play('dash'); 
-                
-                Game.enemies.forEach(e => {
-                    if(e.type !== 'boss') e.hit(9999, 0, 0, true);
-                    else e.hit(1000, 0, 0, true);
-                });
+                Game.enemies.forEach(e => { if(e.type !== 'boss') e.hit(9999, 0, 0, true); else e.hit(1000, 0, 0, true); });
             },
 
             activateTimeStop(duration) {
-                Game.timeStopActive = true;
-                Game.timeStopDuration = duration;
+                Game.timeStopActive = true; Game.timeStopDuration = duration;
                 document.getElementById('fx-layer').className = 'fx-time-stop';
                 Game.texts.push(new Text("TIME STOP", Game.player.x, Game.player.y - 80, 40, '#00ffff'));
             },
@@ -476,89 +431,49 @@
                 if(Game.paused) return;
                 Game.frame++;
 
-                // 1. Clear & Background with Trails
-                // Use source-over with low alpha for trails, but make sure it's dark enough to avoid gray
                 ctx.globalCompositeOperation = 'source-over';
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.25)'; 
-                ctx.fillRect(0, 0, cw, ch);
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.3)'; ctx.fillRect(0, 0, cw, ch);
 
-                if(Game.starfield && Game.player) {
-                    Game.starfield.update(0, 0); 
-                    Game.starfield.draw(ctx);
-                }
+                if(Game.starfield && Game.player) { Game.starfield.update(0, 0); Game.starfield.draw(ctx); }
 
-                // 2. Logic
                 Director.update(Game.time, Game.frame);
 
                 if (Game.timeStopActive) {
                     Game.timeStopDuration--;
-                    if(Game.timeStopDuration <= 0) {
-                        Game.timeStopActive = false;
-                        document.getElementById('fx-layer').className = '';
-                    }
+                    if(Game.timeStopDuration <= 0) { Game.timeStopActive = false; document.getElementById('fx-layer').className = ''; }
                 }
 
                 Game.player.update();
 
-                // 3. Batch Render - GLOW MODE ON
-                ctx.globalCompositeOperation = 'lighter'; // This is the secret sauce
-
-                // Draw pre-rendered glow sprites
-                // Bullets
-                const bImg = Assets.glows.cyan;
-                const bOff = bImg.width / 2;
+                ctx.globalCompositeOperation = 'lighter';
+                const bImg = Assets.glows.cyan; const bOff = bImg.width / 2;
                 for (let i = Game.bullets.length - 1; i >= 0; i--) {
-                    let b = Game.bullets[i];
-                    b.update();
+                    let b = Game.bullets[i]; b.update();
                     if (b.dead) { bulletPool.release(b); Game.bullets.splice(i, 1); }
-                    else {
-                        // Use pre-rendered sprite
-                        ctx.drawImage(b.isExplosive ? Assets.glows.orange : bImg, b.x - bOff, b.y - bOff);
-                    }
+                    else ctx.drawImage(b.isExplosive ? Assets.glows.orange : bImg, b.x - bOff, b.y - bOff);
                 }
 
-                // Particles
                 for (let i = Game.particles.length - 1; i >= 0; i--) {
-                    let p = Game.particles[i];
-                    p.update();
+                    let p = Game.particles[i]; p.update();
                     if (p.dead) { particlePool.release(p); Game.particles.splice(i, 1); }
-                    else {
-                        ctx.globalAlpha = p.life;
-                        ctx.drawImage(Assets.glows[p.colorName] || Assets.glows.white, p.x - 15, p.y - 15, 30, 30);
-                        ctx.globalAlpha = 1;
-                    }
+                    else { ctx.globalAlpha = p.life; ctx.drawImage(Assets.glows[p.colorName] || Assets.glows.white, p.x - 15, p.y - 15, 30, 30); ctx.globalAlpha = 1; }
                 }
 
-                // Lasers (Manual drawing for beams)
-                Game.lasers.forEach((l, i) => {
-                    l.update(); l.draw(); if(l.dead) Game.lasers.splice(i,1);
-                });
+                Game.lasers.forEach((l, i) => { l.update(); l.draw(); if(l.dead) Game.lasers.splice(i,1); });
+                Game.novas.forEach((n, i) => { n.update(); n.draw(); if(n.dead) Game.novas.splice(i,1); });
 
-                // Novas
-                Game.novas.forEach((n, i) => {
-                    n.update(); n.draw(); if(n.dead) Game.novas.splice(i,1);
-                });
-
-                // 4. Solid Render (Player & Enemies need to be visible on top)
                 ctx.globalCompositeOperation = 'source-over';
-
                 Game.player.draw();
 
                 for (let i = Game.enemies.length - 1; i >= 0; i--) {
-                    let e = Game.enemies[i];
-                    e.update();
-                    if (e.dead) { enemyPool.release(e); Game.enemies.splice(i, 1); }
-                    else { e.draw(); }
+                    let e = Game.enemies[i]; e.update();
+                    if (e.dead) { enemyPool.release(e); Game.enemies.splice(i, 1); } else e.draw();
                 }
 
-                // Overlays
                 [Game.eBullets, Game.pickups, Game.texts].forEach(arr => {
-                    for(let i = arr.length-1; i>=0; i--) {
-                        arr[i].update(); arr[i].draw(); if(arr[i].dead) arr.splice(i, 1);
-                    }
+                    for(let i = arr.length-1; i>=0; i--) { arr[i].update(); arr[i].draw(); if(arr[i].dead) arr.splice(i, 1); }
                 });
 
-                // UI Updates
                 const cdPct = Game.player.dashCd / Game.player.maxDashCd;
                 document.getElementById('dash-cd').style.height = (cdPct * 100) + '%';
                 
@@ -573,32 +488,32 @@
         };
         window.Game = Game;
 
-        // --- CLASSES ---
-
         class Player {
             constructor() {
-                this.x = cw/2; this.y = ch/2;
-                this.r = 12;
-                this.stats = {
-                    hp: 100, maxHp: 100, speed: 5, dmg: 15, fireRate: 20, count: 1, 
-                    pierce: 0, magnet: 150, critRate: 0.05, critDmg: 2.0
-                };
+                this.x = cw/2; this.y = ch/2; this.r = 12;
+                this.stats = { hp: 100, maxHp: 100, speed: 5, dmg: 15, fireRate: 20, count: 1, pierce: 0, magnet: 150, critRate: 0.05, critDmg: 2.0 };
                 this.skills = { homing: 0, explosive: 0, laser: 0, timeStop: 0, multiShot: 0, nova: 0, crit: 0 };
-                this.dashCd = 0; this.maxDashCd = 60; 
-                this.dashing = false; this.dashTime = 0;
+                this.dashCd = 0; this.maxDashCd = 60; this.dashing = false; this.dashTime = 0;
                 this.xp = 0; this.lvl = 1; this.nextXp = 30;
-                
                 this.shootTimer = 0; this.laserTimer = 0; this.timeStopTimer = 0; this.novaTimer = 0;
                 this.ultCharge = 0; this.ultActive = false; this.ultTimer = 0;
+                this.joystickId = null; this.joySX = 0; this.joySY = 0; // Floating joystick
             }
 
             update() {
                 let dx = 0, dy = 0;
                 if(Input.keys['w']) dy = -1; if(Input.keys['s']) dy = 1;
                 if(Input.keys['a']) dx = -1; if(Input.keys['d']) dx = 1;
-                if(Input.touch.active) {
-                    dx = (Input.touch.currX - Input.touch.startX)/60;
-                    dy = (Input.touch.currY - Input.touch.startY)/60;
+                
+                // Floating Joystick Logic
+                if (Input.touch.active && Input.touch.id !== null) {
+                    // Current touch position
+                    const touches = Input.touch.touches;
+                    // Find the touch that started movement
+                    // We assume Input.touch.touches stores current pos by ID if we implement fully, 
+                    // but for simplicity in this structure:
+                    dx = (Input.touch.currX - Input.touch.startX) / 50;
+                    dy = (Input.touch.currY - Input.touch.startY) / 50;
                 }
                 
                 if(this.dashCd > 0) this.dashCd--;
@@ -648,25 +563,18 @@
                     const cd = Math.max(40, 180 - (this.skills.laser * 25));
                     if((this.laserTimer+=5) >= cd) {
                         const t = this.getClosestEnemy();
-                        if(t) {
-                            Game.lasers.push(new Laser(this.x, this.y, t.x, t.y, this.skills.laser));
-                            this.laserTimer = 0;
-                        }
+                        if(t) { Game.lasers.push(new Laser(this.x, this.y, t.x, t.y, this.skills.laser)); this.laserTimer = 0; }
                     }
                 }
                 if(this.skills.timeStop > 0) {
                     const cd = 900; 
                     if((this.timeStopTimer+=5) >= cd) {
-                        Game.activateTimeStop(120 + (this.skills.timeStop * 30));
-                        this.timeStopTimer = 0;
+                        Game.activateTimeStop(120 + (this.skills.timeStop * 30)); this.timeStopTimer = 0;
                     }
                 }
                 if(this.skills.nova > 0) {
                     const cd = 120;
-                    if((this.novaTimer+=5) >= cd) {
-                        Game.novas.push(new Nova(this.x, this.y, this.skills.nova));
-                        this.novaTimer = 0;
-                    }
+                    if((this.novaTimer+=5) >= cd) { Game.novas.push(new Nova(this.x, this.y, this.skills.nova)); this.novaTimer = 0; }
                 }
             }
 
@@ -719,15 +627,24 @@
             }
 
             draw() {
-                // Use Sprite for player? Keep drawing simpler for style
                 ctx.fillStyle = '#000';
                 ctx.strokeStyle = this.ultActive ? '#f00' : '#00f3ff'; 
                 ctx.lineWidth = 3;
                 ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-                // Glow via image on top
                 ctx.globalCompositeOperation = 'lighter';
                 ctx.drawImage(Assets.glows.cyan, this.x - 30, this.y - 30);
                 ctx.globalCompositeOperation = 'source-over';
+                
+                // Draw Joystick if active
+                if(Input.touch.active && Input.touch.id !== null) {
+                    ctx.save();
+                    ctx.globalAlpha = 0.3;
+                    ctx.beginPath(); ctx.arc(Input.touch.startX, Input.touch.startY, 40, 0, Math.PI*2); 
+                    ctx.strokeStyle = '#fff'; ctx.stroke();
+                    ctx.beginPath(); ctx.arc(Input.touch.currX, Input.touch.currY, 20, 0, Math.PI*2); 
+                    ctx.fillStyle = '#fff'; ctx.fill();
+                    ctx.restore();
+                }
             }
         }
 
@@ -747,7 +664,7 @@
                 this.maxHp = this.hp;
                 this.sp = config.sp;
                 this.xp = config.xp;
-                this.colName = config.colName; // Use color names for asset lookup
+                this.colName = config.colName; 
                 this.r = config.r || 15;
                 this.dmg = config.dmg || 5;
                 this.pushX = 0; this.pushY = 0;
@@ -850,7 +767,6 @@
                         Game.pickups.push(new Pickup(this.x, this.y, this.xp));
                     }
                     
-                    // Improved explosion
                     for(let i=0; i<8; i++) Game.particles.push(particlePool.get(this.x, this.y, this.colName, 4));
 
                     if(this.type === 'boss') {
@@ -865,23 +781,27 @@
             }
 
             draw() {
-                // Hit Flash (Whiteout)
+                if(Game.timeStopActive && this.type!=='boss') ctx.globalAlpha = 0.5;
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                
                 if(this.hitFlash > 0) {
                     ctx.fillStyle = '#fff';
                     ctx.fillRect(this.x - this.r/2, this.y - this.r/2, this.r, this.r);
                     return;
                 }
 
-                // Sprite based drawing for enemies too
                 const sprite = Assets.glows[this.colName] || Assets.glows.red;
-                const size = this.r * 2.5; // Sprite includes glow
+                const size = this.r * 2.5; 
                 ctx.globalCompositeOperation = 'lighter';
                 ctx.drawImage(sprite, this.x - size/2, this.y - size/2, size, size);
                 ctx.globalCompositeOperation = 'source-over';
+                ctx.restore();
+                ctx.globalAlpha = 1;
             }
         }
 
-        // --- PROJECTILES & FX ---
+        // ... [Bullet, EnemyBullet, Laser, Nova, Particle, Pickup, Text classes remain same] ...
         class Bullet {
             constructor() { this.init(0,0,0,{},{}); }
             init(x, y, a, skills, stats) {
@@ -889,9 +809,7 @@
                 this.vx = Math.cos(a)*12; this.vy = Math.sin(a)*12;
                 this.life = 50; this.r = 5;
                 this.skills = skills; this.stats = stats;
-                this.hitList = []; 
-                this.dead = false;
-                this.isExplosive = skills.explosive > 0;
+                this.hitList = []; this.dead = false; this.isExplosive = skills.explosive > 0;
                 return this;
             }
             update() {
@@ -921,15 +839,12 @@
                     }
                 }
             }
-            draw() {
-                // Drawing handled by batch in main loop
-            }
+            draw() {}
         }
 
         class EnemyBullet {
             constructor(x, y, a, spd) {
-                this.x = x; this.y = y;
-                this.vx = Math.cos(a)*spd; this.vy = Math.sin(a)*spd;
+                this.x = x; this.y = y; this.vx = Math.cos(a)*spd; this.vy = Math.sin(a)*spd;
                 this.r = 6; this.life = 120;
             }
             update() {
@@ -940,10 +855,7 @@
                     Game.player.hit(10); this.dead=true;
                 }
             }
-            draw() {
-                const s = Assets.glows.red;
-                ctx.drawImage(s, this.x - 10, this.y - 10, 20, 20);
-            }
+            draw() { const s = Assets.glows.red; ctx.drawImage(s, this.x - 10, this.y - 10, 20, 20); }
         }
 
         class Laser {
@@ -956,8 +868,7 @@
             }
             update() { this.life--; if(this.life<=0) this.dead=true; }
             draw() {
-                ctx.save();
-                ctx.globalCompositeOperation = 'lighter';
+                ctx.save(); ctx.globalCompositeOperation = 'lighter';
                 ctx.strokeStyle = `rgba(0,255,255,${this.life/15})`; ctx.lineWidth = 8;
                 ctx.beginPath(); ctx.moveTo(this.sx, this.sy); ctx.lineTo(this.tx, this.ty); ctx.stroke();
                 ctx.restore();
@@ -979,8 +890,7 @@
                 });
             }
             draw() {
-                ctx.save();
-                ctx.globalCompositeOperation = 'lighter';
+                ctx.save(); ctx.globalCompositeOperation = 'lighter';
                 ctx.strokeStyle = `rgba(100,200,255,${this.life/30})`; ctx.lineWidth = 5;
                 ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.stroke();
                 ctx.restore();
@@ -997,33 +907,26 @@
                 return this;
             }
             update() { this.x+=this.vx; this.y+=this.vy; this.life-=0.05; if(this.life<=0) this.dead=true; }
-            draw() { 
-               // Batched via main loop
-            }
+            draw() {}
         }
 
         class Pickup {
             constructor(x, y, v) { this.x=x; this.y=y; this.v=v; this.r=5; }
             update() {}
             collect() { this.dead=true; Game.player.gainXp(this.v); }
-            draw() { 
-                ctx.drawImage(Assets.glows.green, this.x - 10, this.y - 10, 20, 20);
-            }
+            draw() { ctx.drawImage(Assets.glows.green, this.x - 10, this.y - 10, 20, 20); }
         }
 
         class Text {
             constructor(t, x, y, s=16, c='#fff') { this.t=t; this.x=x; this.y=y; this.s=s; this.c=c; this.life=40; }
             update() { this.y-=0.5; this.life--; if(this.life<=0) this.dead=true; }
             draw() { 
-                ctx.save();
-                ctx.globalAlpha=this.life/40; ctx.fillStyle=this.c; 
-                ctx.font=`bold ${this.s}px Arial`; 
-                ctx.fillText(this.t, this.x, this.y); 
+                ctx.save(); ctx.globalAlpha=this.life/40; ctx.fillStyle=this.c; 
+                ctx.font=`bold ${this.s}px Arial`; ctx.fillText(this.t, this.x, this.y); 
                 ctx.restore();
             }
         }
 
-        // ... Director and Upgrades remain similar but use pool for enemies ...
         const Director = {
             types: {
                 basic: { hp:10, sp:1.8, xp:5, colName:'purple', r:12, dmg:5 },
@@ -1041,7 +944,6 @@
             
             update(time, frame) {
                 const density = 1 + Math.floor(time / 60);
-                
                 if (frame % Math.max(10, 50 - density*2) === 0 && !Game.waveConfig.bossSpawned) {
                     const r = Math.random();
                     let type = 'basic';
@@ -1049,18 +951,14 @@
                     if (time > 45 && r < 0.15) type = 'shooter';
                     if (time > 60 && r < 0.1) type = 'kamikaze';
                     if (time > 90 && r < 0.1) type = 'tank';
-                    
                     const count = time > 120 ? Math.ceil(Math.random() * density/2) : 1;
                     for(let i=0; i<count; i++) Game.enemies.push(enemyPool.get(type, this.types[type]));
                 }
-
                 if (time > 30 && time % 20 === 0 && frame % 60 === 0) this.swarm(10 + Math.floor(time/10));
-
                 if ((time === 60 || (time > 120 && time % 60 === 0)) && frame % 60 === 0 && !Game.waveConfig.bossSpawned) {
                     Game.enemies.push(enemyPool.get('elite', this.types.elite));
                     Game.texts.push(new Text("⚠ ELITE ⚠", Game.player.x, Game.player.y-100, 30, '#fa0'));
                 }
-
                 const bossCfg = this.bosses.find(b => b.time === time);
                 if (bossCfg && frame % 60 === 0 && !Game.waveConfig.bossSpawned) {
                     Game.enemies.push(enemyPool.get('boss', bossCfg));
@@ -1094,20 +992,17 @@
                 { id:'nova', name:'冰霜新星', desc:'周期性冻结周围', rarity:'rare', max:5, skill:true },
                 { id:'hp', name:'应急治疗', desc:'恢复30%血量', rarity:'common', max:999, type:'heal' }
             ],
-            
             show() {
                 Game.paused = true;
                 const menu = document.getElementById('upgrade-menu');
                 const grid = document.getElementById('card-grid');
                 document.getElementById('reroll-btn').innerText = `重置数据 (${this.rerolls})`;
                 grid.innerHTML = '';
-
                 let valid = this.poolData.filter(u => {
                     if(u.skill) return Game.player.skills[u.id] < u.max;
                     if(u.type !== 'heal') return true; 
                     return true;
                 });
-
                 const choices = [];
                 for(let i=0; i<3; i++) {
                     if(valid.length === 0) break;
@@ -1115,26 +1010,18 @@
                     choices.push(valid[idx]);
                     if(valid[idx].rarity === 'legendary') valid.splice(idx, 1); 
                 }
-
                 choices.forEach(u => {
                     const el = document.createElement('div');
                     el.className = `card ${u.rarity}`;
-                    
                     let curLvl = u.skill ? Game.player.skills[u.id] : 0;
                     let lvlTxt = u.skill ? `LV ${curLvl} ▶ ${curLvl+1}` : '通用强化';
                     if(u.type==='heal') lvlTxt = '即时生效';
-
                     el.innerHTML = `<h3>${u.name}</h3><div class="desc">${u.desc}</div><div class="level-tag">${lvlTxt}</div>`;
-                    el.onclick = () => {
-                        this.apply(u);
-                        menu.style.display = 'none';
-                        Game.paused = false;
-                    };
+                    el.onclick = () => { this.apply(u); menu.style.display = 'none'; Game.paused = false; };
                     grid.appendChild(el);
                 });
                 menu.style.display = 'flex';
             },
-
             apply(u) {
                 const p = Game.player;
                 if(u.skill) p.skills[u.id]++;
@@ -1146,44 +1033,66 @@
                     document.getElementById('hp-bar').style.width = (p.stats.hp/p.stats.maxHp*100)+'%';
                 }
             },
-
             reroll() {
-                if(this.rerolls > 0) {
-                    this.rerolls--;
-                    this.show();
-                }
+                if(this.rerolls > 0) { this.rerolls--; this.show(); }
             }
         };
 
-        // --- CONTROLS ---
-        const Input = { keys: {}, touch: { active:false, startX:0, startY:0, currX:0, currY:0, dash:false } };
+        // --- CONTROLS REWRITE ---
+        const Input = { 
+            keys: {}, 
+            touch: { active: false, id: null, startX: 0, startY: 0, currX: 0, currY: 0, dash: false } 
+        };
         window.onkeydown = e => Input.keys[e.key] = true;
         window.onkeyup = e => Input.keys[e.key] = false;
         
-        canvas.ontouchstart = e => {
+        // Multi-touch Joystick Handler
+        canvas.addEventListener('touchstart', e => {
             e.preventDefault();
-            const t = e.changedTouches[0];
-            if(t.clientX < cw/2) {
-                Input.touch.active = true;
-                Input.touch.startX = Input.touch.currX = t.clientX;
-                Input.touch.startY = Input.touch.currY = t.clientY;
+            // Find a new touch on the left side of the screen if we don't have one
+            for(let i=0; i<e.changedTouches.length; i++) {
+                const t = e.changedTouches[i];
+                if (Input.touch.id === null && t.clientX < cw * 0.6) {
+                    Input.touch.active = true;
+                    Input.touch.id = t.identifier;
+                    Input.touch.startX = Input.touch.currX = t.clientX;
+                    Input.touch.startY = Input.touch.currY = t.clientY;
+                    break;
+                }
             }
-        };
-        canvas.ontouchmove = e => {
-            if(Input.touch.active) {
-                const t = e.changedTouches[0];
-                Input.touch.currX = t.clientX; Input.touch.currY = t.clientY;
-            }
-        };
-        canvas.ontouchend = e => Input.touch.active = false;
+        }, {passive: false});
 
+        canvas.addEventListener('touchmove', e => {
+            e.preventDefault();
+            if(Input.touch.active) {
+                for(let i=0; i<e.changedTouches.length; i++) {
+                    const t = e.changedTouches[i];
+                    if(t.identifier === Input.touch.id) {
+                        Input.touch.currX = t.clientX;
+                        Input.touch.currY = t.clientY;
+                        break;
+                    }
+                }
+            }
+        }, {passive: false});
+
+        canvas.addEventListener('touchend', e => {
+            e.preventDefault();
+            for(let i=0; i<e.changedTouches.length; i++) {
+                if(e.changedTouches[i].identifier === Input.touch.id) {
+                    Input.touch.active = false;
+                    Input.touch.id = null;
+                    break;
+                }
+            }
+        });
+
+        // Skill Buttons Handlers (Pointer Events handles touch/mouse uniformly)
         const dashBtn = document.getElementById('dash-btn');
-        dashBtn.ontouchstart = (e) => { e.preventDefault(); Input.touch.dash = true; };
-        dashBtn.onmousedown = (e) => { e.preventDefault(); Input.touch.dash = true; };
+        dashBtn.onpointerdown = (e) => { e.preventDefault(); Input.touch.dash = true; };
         
         const ultBtn = document.getElementById('ult-btn');
-        ultBtn.ontouchstart = (e) => { e.preventDefault(); Game.triggerUlt(); };
-        ultBtn.onmousedown = (e) => { e.preventDefault(); Game.triggerUlt(); };
+        ultBtn.onpointerdown = (e) => { e.preventDefault(); Game.triggerUlt(); };
 
     })();
     </script>
