@@ -474,6 +474,7 @@ const State = {
     headshots: 0,
     accuracy: { shots: 0, hits: 0 },
     sens: 0.5,
+    mouse: { x: 0, y: 0 }, // Added missing mouse object
     
     // Weapon State
     currentWeaponIdx: 0,
@@ -645,7 +646,6 @@ for(let i=0; i<8; i++) State.bots.push(new Bot());
 // --- 7. INPUT & LOGIC ---
 const Input = {
     keys: {},
-    mouse: {x:0, y:0},
     init: () => {
         document.addEventListener('keydown', e => {
             Input.keys[e.key] = true;
